@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>都道府県・県庁所在地クイズ（高精度版）</title>
+    <meta name="description" content="高精度な地図データを使用した都道府県・県庁所在地クイズアプリ。地図をクリックして楽しく学習しよう！">
+    <meta name="keywords" content="都道府県, 県庁所在地, クイズ, 地図, 学習, 日本地理">
+    <meta name="author" content="Prefecture Quiz App">
+    <title>都道府県・県庁所在地クイズ | 高精度地図で楽しく学習</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗾</text></svg>">
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -341,6 +345,15 @@
             100% { transform: rotate(360deg); }
         }
 
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #718096;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.9em;
+        }
+
         @media (max-width: 1200px) {
             .quiz-layout {
                 grid-template-columns: 1fr;
@@ -382,7 +395,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🗾 都道府県・県庁所在地クイズ（高精度版）</h1>
+        <h1>🗾 都道府県・県庁所在地クイズ</h1>
         
         <div id="loading-screen" class="loading">
             <div class="loading-spinner"></div>
@@ -392,7 +405,8 @@
         <div id="start-screen" class="start-screen" style="display: none;">
             <h2>地図をクリックして回答！</h2>
             <p>県庁所在地の名前が表示されるので、該当する都道府県を地図上でクリックしてください。<br>
-            高精度な地図データを使用しているので、より正確な学習ができます！</p>
+            高精度な地図データを使用しているので、より正確な学習ができます！<br>
+            <strong>地図にマウスを乗せると都道府県名が表示されます。</strong></p>
             <button onclick="startQuiz()">クイズ開始</button>
         </div>
 
@@ -412,7 +426,8 @@
                     <div id="question" class="question"></div>
                     
                     <div class="instruction">
-                        👆 地図上の都道府県をクリックして回答してください
+                        👆 地図上の都道府県をクリックして回答してください<br>
+                        💡 マウスを乗せると都道府県名が表示されます
                     </div>
                     
                     <div id="result" class="result"></div>
@@ -450,6 +465,12 @@
             <div id="final-score" class="final-score"></div>
             <div id="final-message"></div>
             <button onclick="restartQuiz()">もう一度挑戦</button>
+            <button onclick="shareResults()" style="background: #1da1f2; margin-left: 10px;">結果をシェア</button>
+        </div>
+
+        <div class="footer">
+            <p>🗾 都道府県・県庁所在地クイズ | 高精度地図データ使用<br>
+            データ提供: 国土地理院 | Made with ❤️ by Prefecture Quiz</p>
         </div>
     </div>
 
@@ -869,6 +890,24 @@
             document.getElementById('final-screen').style.display = 'none';
             document.getElementById('start-screen').style.display = 'block';
             clearMapHighlight();
+        }
+
+        function shareResults() {
+            const percentage = Math.round((correctCount / 47) * 100);
+            const text = `都道府県・県庁所在地クイズで ${correctCount}/47問正解 (${percentage}%) でした！🗾\n\n高精度地図で楽しく学習できます！`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '都道府県・県庁所在地クイズ',
+                    text: text,
+                    url: window.location.href
+                });
+            } else {
+                // フォールバック: クリップボードにコピー
+                navigator.clipboard.writeText(text + '\n' + window.location.href).then(() => {
+                    alert('結果をクリップボードにコピーしました！');
+                });
+            }
         }
 
         // ページ読み込み時に地図データを読み込む
