@@ -851,8 +851,14 @@
                 });
                 
                 // タッチイベント（スマホ対応）
+                let touchStartTime = 0;
+                let touchStartPos = { x: 0, y: 0 };
+                
                 path.addEventListener('touchstart', function(e) {
-                    e.preventDefault(); // スクロールを防ぐ
+                    touchStartTime = Date.now();
+                    touchStartPos.x = e.touches[0].clientX;
+                    touchStartPos.y = e.touches[0].clientY;
+                    
                     const prefectureName = this.getAttribute('data-prefecture-name');
                     tooltip.textContent = prefectureName;
                     tooltip.classList.add('show');
@@ -860,12 +866,26 @@
                 });
                 
                 path.addEventListener('touchmove', function(e) {
-                    e.preventDefault();
                     updateTooltipPositionFromTouch(e.touches[0]);
                 });
                 
                 path.addEventListener('touchend', function(e) {
-                    // タッチ終了時はツールチップを少し遅れて非表示にする
+                    const touchEndTime = Date.now();
+                    const touchDuration = touchEndTime - touchStartTime;
+                    const touchEndPos = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+                    const distance = Math.sqrt(
+                        Math.pow(touchEndPos.x - touchStartPos.x, 2) + 
+                        Math.pow(touchEndPos.y - touchStartPos.y, 2)
+                    );
+                    
+                    // タップ判定：移動距離が10px以下かつ500ms以下
+                    if (distance < 10 && touchDuration < 500 && !isAnswered) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleDoubleTap(this.id);
+                    }
+                    
+                    // ツールチップを少し遅れて非表示にする
                     setTimeout(() => {
                         tooltip.classList.remove('show');
                     }, 1000);
@@ -932,25 +952,28 @@
 
         function handleDoubleTap(clickedId) {
             const currentTime = Date.now();
+            console.log('handleDoubleTap called:', clickedId, 'selectedPrefectureId:', selectedPrefectureId, 'timeDiff:', currentTime - lastTapTime);
             
-            if (selectedPrefectureId === clickedId && currentTime - lastTapTime < 500) {
+            if (selectedPrefectureId === clickedId && currentTime - lastTapTime < 800) {
                 // ダブルタップ（2回目のタップ）- 回答確定
+                console.log('Double tap confirmed!');
                 clearTimeout(tapTimeout);
                 clearSelection();
                 hideDoubleTapHint();
                 handlePrefectureClick(clickedId);
             } else {
                 // 最初のタップ - 選択状態にする
+                console.log('First tap - selecting');
                 clearSelection();
                 selectedPrefectureId = clickedId;
                 highlightPrefecture(clickedId, 'selected');
                 showDoubleTapHint();
                 
-                // 3秒後に選択状態を自動クリア
+                // 5秒後に選択状態を自動クリア
                 tapTimeout = setTimeout(() => {
                     clearSelection();
                     hideDoubleTapHint();
-                }, 3000);
+                }, 5000);
             }
             
             lastTapTime = currentTime;
@@ -1164,18 +1187,16 @@
                     Math.pow(touch2.clientY - touch1.clientY, 2)
                 );
             } else if (e.touches.length === 1) {
-                // ドラッグ開始
-                isDragging = true;
+                // ドラッグ開始の準備（すぐにはドラッグ状態にしない）
                 dragStartX = e.touches[0].clientX;
                 dragStartY = e.touches[0].clientY;
             }
         }
         
         function handleTouchMove(e) {
-            e.preventDefault();
-            
             if (e.touches.length === 2) {
                 // ピンチズーム処理
+                e.preventDefault();
                 const touch1 = e.touches[0];
                 const touch2 = e.touches[1];
                 const currentDistance = Math.sqrt(
@@ -1190,13 +1211,23 @@
                          (touch1.clientY + touch2.clientY) / 2);
                 }
                 lastTouchDistance = currentDistance;
-            } else if (e.touches.length === 1 && isDragging) {
-                // パン処理
+            } else if (e.touches.length === 1) {
+                // 移動距離を計算してドラッグ判定
                 const deltaX = e.touches[0].clientX - dragStartX;
                 const deltaY = e.touches[0].clientY - dragStartY;
-                pan(deltaX, deltaY);
-                dragStartX = e.touches[0].clientX;
-                dragStartY = e.touches[0].clientY;
+                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                
+                // 10px以上移動したらドラッグ開始
+                if (distance > 10) {
+                    isDragging = true;
+                }
+                
+                if (isDragging) {
+                    e.preventDefault();
+                    pan(deltaX, deltaY);
+                    dragStartX = e.touches[0].clientX;
+                    dragStartY = e.touches[0].clientY;
+                }
             }
         }
         
