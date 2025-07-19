@@ -388,6 +388,140 @@
             opacity: 1;
         }
 
+        /* 誤タッチ防止機能のスタイル */
+        .prefecture-path.selected {
+            fill: #fff3cd;
+            stroke: #ffc107;
+            stroke-width: 3;
+            animation: selectedPulse 1.5s infinite;
+        }
+
+        @keyframes selectedPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .confirmation-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .confirmation-dialog.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .confirmation-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .confirmation-dialog.show .confirmation-content {
+            transform: scale(1);
+        }
+
+        .confirmation-title {
+            font-size: 1.5em;
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .confirmation-prefecture {
+            font-size: 1.8em;
+            color: #667eea;
+            margin: 20px 0;
+            font-weight: bold;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .confirmation-question {
+            font-size: 1.1em;
+            color: #718096;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .confirm-btn, .cancel-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .confirm-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .confirm-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .cancel-btn {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .cancel-btn:hover {
+            background: #cbd5e0;
+            transform: translateY(-2px);
+        }
+
+        .selection-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(102, 126, 234, 0.95);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 1500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .selection-hint.show {
+            opacity: 1;
+        }
+
         .loading {
             text-align: center;
             padding: 50px;
@@ -493,7 +627,8 @@
                     <div class="instruction">
                         👆 地図上の都道府県をクリックして回答してください<br>
                         💡 マウスを乗せる、またはタッチすると都道府県名が表示されます<br>
-                        📱 ピンチでズーム、ドラッグで移動できます
+                        📱 ピンチでズーム、ドラッグで移動できます<br>
+                        ✅ クリック後に確認ダイアログが表示されます
                     </div>
                     
                     <div id="result" class="result"></div>
@@ -529,7 +664,21 @@
                             <button class="zoom-btn reset-btn" onclick="resetZoom()" title="リセット">リセット</button>
                         </div>
                         <div id="zoom-info" class="zoom-info">ピンチでズーム可能</div>
+                        <div id="selection-hint" class="selection-hint">タップして選択中...</div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 確認ダイアログ -->
+        <div id="confirmation-dialog" class="confirmation-dialog">
+            <div class="confirmation-content">
+                <div class="confirmation-title">📍 回答の確認</div>
+                <div id="confirmation-prefecture" class="confirmation-prefecture"></div>
+                <div id="confirmation-question" class="confirmation-question"></div>
+                <div class="confirmation-buttons">
+                    <button class="confirm-btn" onclick="confirmAnswer()">この回答で決定</button>
+                    <button class="cancel-btn" onclick="cancelSelection()">キャンセル</button>
                 </div>
             </div>
         </div>
@@ -606,6 +755,8 @@
         let currentAnswer = null;
         let isAnswered = false;
         let autoProgressTimer = null;
+        let selectedPrefectureId = null;
+        let isConfirmationShowing = false;
 
         // 地図データの読み込み
         async function loadMapData() {
@@ -784,8 +935,8 @@
             paths.forEach(path => {
                 // クリックイベント
                 path.addEventListener('click', function() {
-                    if (!isAnswered) {
-                        handlePrefectureClick(this.id);
+                    if (!isAnswered && !isConfirmationShowing) {
+                        handlePrefectureSelection(this.id);
                     }
                 });
                 
@@ -887,12 +1038,94 @@
             document.getElementById('finish-btn').style.display = 'none';
         }
 
+        function handlePrefectureSelection(clickedId) {
+            if (isAnswered || isConfirmationShowing) return;
+            
+            // 以前の選択をクリア
+            clearSelection();
+            
+            // 新しい選択を設定
+            selectedPrefectureId = clickedId;
+            
+            // 選択状態を表示
+            highlightPrefecture(clickedId, 'selected');
+            
+            // 選択ヒントを表示
+            showSelectionHint();
+            
+            // 確認ダイアログを表示
+            showConfirmationDialog(clickedId);
+        }
+        
+        function showConfirmationDialog(prefectureId) {
+            isConfirmationShowing = true;
+            const current = shuffledPrefectures[currentQuestionIndex];
+            const prefectureName = getPrefectureNameById(prefectureId);
+            
+            document.getElementById('confirmation-prefecture').textContent = prefectureName;
+            document.getElementById('confirmation-question').textContent = 
+                `「${current.capital}」の県庁所在地として「${prefectureName}」を選択しますか？`;
+            
+            const dialog = document.getElementById('confirmation-dialog');
+            dialog.classList.add('show');
+        }
+        
+        function confirmAnswer() {
+            if (!selectedPrefectureId) return;
+            
+            // ダイアログを閉じる
+            hideConfirmationDialog();
+            
+            // 実際の回答処理
+            handlePrefectureClick(selectedPrefectureId);
+        }
+        
+        function cancelSelection() {
+            hideConfirmationDialog();
+            clearSelection();
+        }
+        
+        function hideConfirmationDialog() {
+            isConfirmationShowing = false;
+            const dialog = document.getElementById('confirmation-dialog');
+            dialog.classList.remove('show');
+            hideSelectionHint();
+        }
+        
+        function clearSelection() {
+            if (selectedPrefectureId) {
+                const prefecturePath = document.getElementById(selectedPrefectureId);
+                if (prefecturePath) {
+                    prefecturePath.classList.remove('selected');
+                }
+                selectedPrefectureId = null;
+            }
+        }
+        
+        function showSelectionHint() {
+            const hint = document.getElementById('selection-hint');
+            hint.classList.add('show');
+        }
+        
+        function hideSelectionHint() {
+            const hint = document.getElementById('selection-hint');
+            hint.classList.remove('show');
+        }
+        
+        function getPrefectureNameById(prefectureId) {
+            const path = document.getElementById(prefectureId);
+            return path ? path.getAttribute('data-prefecture-name') : '';
+        }
+
         function handlePrefectureClick(clickedId) {
             if (isAnswered) return;
             
             isAnswered = true;
             const current = shuffledPrefectures[currentQuestionIndex];
             const resultDiv = document.getElementById('result');
+            
+            // 選択状態をクリア
+            clearSelection();
             
             if (clickedId === currentAnswer) {
                 correctCount++;
@@ -955,8 +1188,9 @@
         function clearMapHighlight() {
             const paths = document.querySelectorAll('.prefecture-path');
             paths.forEach(path => {
-                path.classList.remove('current', 'correct', 'incorrect');
+                path.classList.remove('current', 'correct', 'incorrect', 'selected');
             });
+            clearSelection();
         }
 
         function highlightPrefecture(prefectureId, type) {
@@ -998,6 +1232,9 @@
                 clearInterval(autoProgressTimer);
                 autoProgressTimer = null;
             }
+            
+            // 確認ダイアログを閉じる
+            hideConfirmationDialog();
             
             document.getElementById('final-screen').style.display = 'none';
             document.getElementById('start-screen').style.display = 'block';
