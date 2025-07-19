@@ -6,7 +6,7 @@
     <meta name="description" content="高精度な地図データを使用した都道府県・県庁所在地クイズアプリ。地図をクリックして楽しく学習しよう！">
     <meta name="keywords" content="都道府県, 県庁所在地, クイズ, 地図, 学習, 日本地理">
     <meta name="author" content="Prefecture Quiz App">
-    <title>都道府県・県庁所在地クイズ | 高精度地図で楽しく学習①</title>
+    <title>都道府県・県庁所在地クイズ | 高精度地図で楽しく学習</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗾</text></svg>">
     <style>
         body {
@@ -406,7 +406,7 @@
             <h2>地図をクリックして回答！</h2>
             <p>県庁所在地の名前が表示されるので、該当する都道府県を地図上でクリックしてください。<br>
             高精度な地図データを使用しているので、より正確な学習ができます！<br>
-            <strong>地図にマウスを乗せると都道府県名が表示されます。</strong></p>
+            <strong>地図にマウスを乗せる、またはタッチすると都道府県名が表示されます。</strong></p>
             <button onclick="startQuiz()">クイズ開始</button>
         </div>
 
@@ -427,7 +427,7 @@
                     
                     <div class="instruction">
                         👆 地図上の都道府県をクリックして回答してください<br>
-                        💡 マウスを乗せると都道府県名が表示されます
+                        💡 マウスを乗せる、またはタッチすると都道府県名が表示されます
                     </div>
                     
                     <div id="result" class="result"></div>
@@ -729,6 +729,27 @@
                 path.addEventListener('mouseleave', function() {
                     tooltip.classList.remove('show');
                 });
+                
+                // タッチイベント（スマホ対応）
+                path.addEventListener('touchstart', function(e) {
+                    e.preventDefault(); // スクロールを防ぐ
+                    const prefectureName = this.getAttribute('data-prefecture-name');
+                    tooltip.textContent = prefectureName;
+                    tooltip.classList.add('show');
+                    updateTooltipPositionFromTouch(e.touches[0]);
+                });
+                
+                path.addEventListener('touchmove', function(e) {
+                    e.preventDefault();
+                    updateTooltipPositionFromTouch(e.touches[0]);
+                });
+                
+                path.addEventListener('touchend', function(e) {
+                    // タッチ終了時はツールチップを少し遅れて非表示にする
+                    setTimeout(() => {
+                        tooltip.classList.remove('show');
+                    }, 1000);
+                });
             });
         }
         
@@ -744,6 +765,20 @@
             // ツールチップの位置を設定（マウスの少し上に表示）
             tooltip.style.left = x + 'px';
             tooltip.style.top = (y - 40) + 'px';
+        }
+        
+        function updateTooltipPositionFromTouch(touch) {
+            const tooltip = document.getElementById('tooltip');
+            const mapContainer = document.querySelector('.map-container');
+            const mapRect = mapContainer.getBoundingClientRect();
+            
+            // タッチ位置を取得（地図コンテナ内での相対位置）
+            const x = touch.clientX - mapRect.left;
+            const y = touch.clientY - mapRect.top;
+            
+            // ツールチップの位置を設定（タッチ位置の少し上に表示）
+            tooltip.style.left = x + 'px';
+            tooltip.style.top = (y - 60) + 'px'; // タッチの場合は指で隠れないよう少し上に
         }
 
         function showQuestion() {
