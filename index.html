@@ -119,6 +119,25 @@
             border-left: 4px solid #e53e3e;
         }
 
+        .trivia {
+            font-size: 1.2em;
+            margin: 25px 0;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f0f8ff;
+            color: #2b6cb0;
+            border-left: 4px solid #3182ce;
+            line-height: 1.6;
+        }
+
+        .trivia-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .controls {
             text-align: center;
             margin-top: 30px;
@@ -558,6 +577,13 @@
                 padding: 15px;
             }
             
+            .trivia {
+                font-size: 1em;
+                margin: 15px 0;
+                padding: 15px;
+                line-height: 1.4;
+            }
+            
             .controls {
                 margin-top: 15px;
             }
@@ -831,6 +857,8 @@
                     
                     <div id="result" class="result"></div>
                     
+                    <div id="trivia" class="trivia" style="display: none;"></div>
+                    
                     <div class="controls">
                         <div id="auto-progress" style="display: none; text-align: center; color: #718096; font-size: 1.1em;">
                             <span id="countdown">1</span>秒後に次の問題へ...
@@ -886,106 +914,106 @@
     <script>
         const prefectures = [
             // 簡単（同じ名前・超有名）
-            { name: '東京都', capital: '東京都', id: 'tokyo', difficulty: 'easy' },
-            { name: '京都府', capital: '京都市', id: 'kyoto', difficulty: 'easy' },
-            { name: '大阪府', capital: '大阪市', id: 'osaka', difficulty: 'easy' },
-            { name: '神奈川県', capital: '横浜市', id: 'kanagawa', difficulty: 'easy' },
-            { name: '千葉県', capital: '千葉市', id: 'chiba', difficulty: 'easy' },
-            { name: '埼玉県', capital: 'さいたま市', id: 'saitama', difficulty: 'easy' },
-            { name: '青森県', capital: '青森市', id: 'aomori', difficulty: 'easy' },
-            { name: '秋田県', capital: '秋田市', id: 'akita', difficulty: 'easy' },
-            { name: '山形県', capital: '山形市', id: 'yamagata', difficulty: 'easy' },
-            { name: '福島県', capital: '福島市', id: 'fukushima', difficulty: 'easy' },
-            { name: '新潟県', capital: '新潟市', id: 'niigata', difficulty: 'easy' },
-            { name: '富山県', capital: '富山市', id: 'toyama', difficulty: 'easy' },
-            { name: '福井県', capital: '福井市', id: 'fukui', difficulty: 'easy' },
-            { name: '長野県', capital: '長野市', id: 'nagano', difficulty: 'easy' },
-            { name: '岐阜県', capital: '岐阜市', id: 'gifu', difficulty: 'easy' },
-            { name: '静岡県', capital: '静岡市', id: 'shizuoka', difficulty: 'easy' },
-            { name: '奈良県', capital: '奈良市', id: 'nara', difficulty: 'easy' },
-            { name: '和歌山県', capital: '和歌山市', id: 'wakayama', difficulty: 'easy' },
-            { name: '鳥取県', capital: '鳥取市', id: 'tottori', difficulty: 'easy' },
-            { name: '徳島県', capital: '徳島市', id: 'tokushima', difficulty: 'easy' },
-            { name: '高知県', capital: '高知市', id: 'kochi', difficulty: 'easy' },
-            { name: '佐賀県', capital: '佐賀市', id: 'saga', difficulty: 'easy' },
-            { name: '長崎県', capital: '長崎市', id: 'nagasaki', difficulty: 'easy' },
-            { name: '大分県', capital: '大分市', id: 'oita', difficulty: 'easy' },
-            { name: '宮崎県', capital: '宮崎市', id: 'miyazaki', difficulty: 'easy' },
+            { name: '東京都', capital: '東京都', id: 'tokyo', difficulty: 'easy', gourmet: 'もんじゃ焼き', trivia: '下町の駄菓子屋で生まれた庶民的な料理。水で溶いた小麦粉を鉄板で焼き、ヘラで食べる独特のスタイルが特徴です。' },
+            { name: '京都府', capital: '京都市', id: 'kyoto', difficulty: 'easy', gourmet: '湯豆腐', trivia: '精進料理から発達した京都の代表的な料理。良質な水と豆腐を昆布だしで温めて、ポン酢や醤油でシンプルに味わいます。' },
+            { name: '大阪府', capital: '大阪市', id: 'osaka', difficulty: 'easy', gourmet: 'たこ焼き', trivia: '大阪のソウルフード。明石焼きをヒントに考案され、外はカリッと中はトロッとした食感と、ソースとマヨネーズの組み合わせが絶妙です。' },
+            { name: '神奈川県', capital: '横浜市', id: 'kanagawa', difficulty: 'easy', gourmet: 'サンマーメン', trivia: '横浜発祥のご当地ラーメン。醤油ベースのスープにもやしたっぷりの野菜あんかけがのった、ボリューム満点の一品です。' },
+            { name: '千葉県', capital: '千葉市', id: 'chiba', difficulty: 'easy', gourmet: 'ピーナッツ味噌', trivia: '千葉県産の落花生を使った郷土料理。味噌にピーナッツを加えた甘めの味付けで、野菜スティックなどにつけて食べます。' },
+            { name: '埼玉県', capital: 'さいたま市', id: 'saitama', difficulty: 'easy', gourmet: '十万石まんじゅう', trivia: '「うまい、うますぎる」のCMで有名な埼玉銘菓。つくね芋を使った皮とこし餡が特徴の上品な和菓子です。' },
+            { name: '青森県', capital: '青森市', id: 'aomori', difficulty: 'easy', gourmet: 'せんべい汁', trivia: '八戸地方の郷土料理。南部せんべいを汁に入れて煮込んだ素朴な家庭の味。せんべいがもちもちした食感に変わります。' },
+            { name: '秋田県', capital: '秋田市', id: 'akita', difficulty: 'easy', gourmet: 'きりたんぽ', trivia: '新米を潰して竹輪状にしたご飯を串に刺し、比内地鶏の出汁で煮込んだ鍋料理。秋田の代表的な郷土料理です。' },
+            { name: '山形県', capital: '山形市', id: 'yamagata', difficulty: 'easy', gourmet: '芋煮', trivia: '秋の風物詩として川原で大鍋を囲んで食べる芋煮会が有名。里芋と牛肉を醤油味で煮込むのが山形流です。' },
+            { name: '福島県', capital: '福島市', id: 'fukushima', difficulty: 'easy', gourmet: '喜多方ラーメン', trivia: '札幌、博多と並ぶ日本三大ラーメンの一つ。醤油ベースの澄んだスープと平打ち縮れ麺が特徴です。' },
+            { name: '新潟県', capital: '新潟市', id: 'niigata', difficulty: 'easy', gourmet: 'へぎそば', trivia: 'つなぎに布海苔を使った緑色がかったそば。「へぎ」という木の器に盛りつけられ、つるりとした喉越しが自慢です。' },
+            { name: '富山県', capital: '富山市', id: 'toyama', difficulty: 'easy', gourmet: 'ますの寿司', trivia: '神通川で獲れる鱒を使った駅弁として有名。竹の皮に包まれた押し寿司で、富山の代表的な郷土料理です。' },
+            { name: '福井県', capital: '福井市', id: 'fukui', difficulty: 'easy', gourmet: 'ソースカツ丼', trivia: '卵でとじずにウスターソースをかけたカツ丼。福井では「カツ丼」といえばこのソースカツ丼を指します。' },
+            { name: '長野県', capital: '長野市', id: 'nagano', difficulty: 'easy', gourmet: '信州そば', trivia: '冷涼な気候で育ったそばの実を使った香り高いそば。戸隠そばや安曇野そばなど、地域ごとに特色があります。' },
+            { name: '岐阜県', capital: '岐阜市', id: 'gifu', difficulty: 'easy', gourmet: '飛騨牛', trivia: '飛騨地方で育てられた黒毛和牛。霜降りが美しく、とろけるような食感と深い旨みで全国的に高い評価を受けています。' },
+            { name: '静岡県', capital: '静岡市', id: 'shizuoka', difficulty: 'easy', gourmet: '富士宮やきそば', trivia: 'コシの強い蒸し麺と肉かす、削り節が特徴のB級グルメ。B-1グランプリで金賞を受賞し、全国的に有名になりました。' },
+            { name: '奈良県', capital: '奈良市', id: 'nara', difficulty: 'easy', gourmet: '柿の葉寿司', trivia: '奈良の山間部で生まれた保存食。鯖や鮭を酢飯にのせ、殺菌作用のある柿の葉で包んだ押し寿司です。' },
+            { name: '和歌山県', capital: '和歌山市', id: 'wakayama', difficulty: 'easy', gourmet: '梅干し', trivia: '和歌山は梅の生産量日本一。南高梅を使った梅干しは大粒で肉厚、上品な酸味と甘みが特徴です。' },
+            { name: '鳥取県', capital: '鳥取市', id: 'tottori', difficulty: 'easy', gourmet: '二十世紀梨', trivia: '鳥取県の代表的な特産品。みずみずしくシャキシャキした食感と上品な甘さが特徴の青梨です。' },
+            { name: '徳島県', capital: '徳島市', id: 'tokushima', difficulty: 'easy', gourmet: '徳島ラーメン', trivia: '豚骨醤油ベースの濃厚なスープに生卵をトッピングするのが特徴。白系、黄系、茶系の3つの系統があります。' },
+            { name: '高知県', capital: '高知市', id: 'kochi', difficulty: 'easy', gourmet: 'カツオのたたき', trivia: '土佐の代表的な郷土料理。新鮮なカツオを藁で豪快に炙り、ニンニクや玉ねぎと一緒にポン酢で食べます。' },
+            { name: '佐賀県', capital: '佐賀市', id: 'saga', difficulty: 'easy', gourmet: '佐賀牛', trivia: '佐賀県産の黒毛和牛のブランド。きめ細かな霜降りと柔らかな肉質で、焼肉やステーキに最適です。' },
+            { name: '長崎県', capital: '長崎市', id: 'nagasaki', difficulty: 'easy', gourmet: 'ちゃんぽん', trivia: '長崎発祥の麺料理。豚骨と鶏ガラのスープに野菜や魚介をたっぷり入れた栄養満点の庶民料理です。' },
+            { name: '大分県', capital: '大分市', id: 'oita', difficulty: 'easy', gourmet: 'とり天', trivia: '大分県の郷土料理。鶏肉に衣をつけて揚げた天ぷらで、ポン酢や醤油ベースのタレで食べます。' },
+            { name: '宮崎県', capital: '宮崎市', id: 'miyazaki', difficulty: 'easy', gourmet: 'チキン南蛮', trivia: '宮崎発祥の鶏料理。甘酢ダレをかけた揚げ鶏にタルタルソースをたっぷりかけた、宮崎県民のソウルフードです。' },
             
             // 普通（推測可能・関連性がある）
-            { name: '北海道', capital: '札幌市', id: 'hokkaido', difficulty: 'normal' },
-            { name: '宮城県', capital: '仙台市', id: 'miyagi', difficulty: 'normal' },
-            { name: '愛知県', capital: '名古屋市', id: 'aichi', difficulty: 'normal' },
-            { name: '兵庫県', capital: '神戸市', id: 'hyogo', difficulty: 'normal' },
-            { name: '岡山県', capital: '岡山市', id: 'okayama', difficulty: 'normal' },
-            { name: '広島県', capital: '広島市', id: 'hiroshima', difficulty: 'normal' },
-            { name: '山口県', capital: '山口市', id: 'yamaguchi', difficulty: 'normal' },
-            { name: '福岡県', capital: '福岡市', id: 'fukuoka', difficulty: 'normal' },
-            { name: '熊本県', capital: '熊本市', id: 'kumamoto', difficulty: 'normal' },
-            { name: '鹿児島県', capital: '鹿児島市', id: 'kagoshima', difficulty: 'normal' },
+            { name: '北海道', capital: '札幌市', id: 'hokkaido', difficulty: 'normal', gourmet: 'ジンギスカン', trivia: '北海道開拓時代に羊毛を取るために飼育された羊肉を使った料理。特製のタレに漬け込んだラム肉を鉄板で焼いて食べます。' },
+            { name: '宮城県', capital: '仙台市', id: 'miyagi', difficulty: 'normal', gourmet: '牛タン', trivia: '仙台名物として有名。戦後に牛タン専門店が誕生し、厚切りの牛タンを炭火で焼いて麦飯と一緒に食べるスタイルが定着しました。' },
+            { name: '愛知県', capital: '名古屋市', id: 'aichi', difficulty: 'normal', gourmet: '味噌カツ', trivia: '名古屋名物の代表格。赤味噌ベースの濃厚なタレをかけたとんかつで、甘辛い味付けが特徴的です。' },
+            { name: '兵庫県', capital: '神戸市', id: 'hyogo', difficulty: 'normal', gourmet: '神戸牛', trivia: '世界最高級の牛肉として知られるブランド牛。厳格な基準をクリアした但馬牛のみが神戸牛と名乗ることができます。' },
+            { name: '岡山県', capital: '岡山市', id: 'okayama', difficulty: 'normal', gourmet: 'きびだんご', trivia: '桃太郎伝説で有名な岡山の銘菓。もち米と砂糖、水飴で作られた柔らかくて上品な甘さの和菓子です。' },
+            { name: '広島県', capital: '広島市', id: 'hiroshima', difficulty: 'normal', gourmet: 'お好み焼き', trivia: '広島風お好み焼きは具材を重ねて焼く「重ね焼き」が特徴。中華麺が入り、ヘラとフォークで食べる独特のスタイルです。' },
+            { name: '山口県', capital: '山口市', id: 'yamaguchi', difficulty: 'normal', gourmet: 'ふぐ', trivia: '下関市はふぐの本場として有名。透明感のある薄造りの刺身「てっさ」と鍋料理「てっちり」が代表的な食べ方です。' },
+            { name: '福岡県', capital: '福岡市', id: 'fukuoka', difficulty: 'normal', gourmet: '博多ラーメン', trivia: '豚骨ラーメンの発祥地。白濁したスープと細い麺が特徴で、替え玉文化も博多から全国に広がりました。' },
+            { name: '熊本県', capital: '熊本市', id: 'kumamoto', difficulty: 'normal', gourmet: '馬刺し', trivia: '熊本の郷土料理として親しまれている馬肉の刺身。甘い醤油にニンニクと生姜を薬味として食べます。' },
+            { name: '鹿児島県', capital: '鹿児島市', id: 'kagoshima', difficulty: 'normal', gourmet: '黒豚', trivia: '鹿児島県特産の黒豚は、やわらかく甘みのある肉質が特徴。しゃぶしゃぶやとんかつで味わうのが人気です。' },
             
             // 難しい（全く違う名前）
-            { name: '岩手県', capital: '盛岡市', id: 'iwate', difficulty: 'hard' },
-            { name: '茨城県', capital: '水戸市', id: 'ibaraki', difficulty: 'hard' },
-            { name: '栃木県', capital: '宇都宮市', id: 'tochigi', difficulty: 'hard' },
-            { name: '群馬県', capital: '前橋市', id: 'gunma', difficulty: 'hard' },
-            { name: '石川県', capital: '金沢市', id: 'ishikawa', difficulty: 'hard' },
-            { name: '山梨県', capital: '甲府市', id: 'yamanashi', difficulty: 'hard' },
-            { name: '三重県', capital: '津市', id: 'mie', difficulty: 'hard' },
-            { name: '滋賀県', capital: '大津市', id: 'shiga', difficulty: 'hard' },
-            { name: '島根県', capital: '松江市', id: 'shimane', difficulty: 'hard' },
-            { name: '香川県', capital: '高松市', id: 'kagawa', difficulty: 'hard' },
-            { name: '愛媛県', capital: '松山市', id: 'ehime', difficulty: 'hard' },
-            { name: '沖縄県', capital: '那覇市', id: 'okinawa', difficulty: 'hard' },
+            { name: '岩手県', capital: '盛岡市', id: 'iwate', difficulty: 'hard', gourmet: 'わんこそば', trivia: '盛岡の名物で、一口サイズのそばを次々と食べ続ける伝統的な食べ方。給仕さんの「はい、どんどん」の掛け声が有名です。' },
+            { name: '茨城県', capital: '水戸市', id: 'ibaraki', difficulty: 'hard', gourmet: '納豆', trivia: '水戸納豆として全国的に有名。茨城県は納豆の消費量が全国1位で、藁に包まれた昔ながらの納豆も人気です。' },
+            { name: '栃木県', capital: '宇都宮市', id: 'tochigi', difficulty: 'hard', gourmet: '餃子', trivia: '宇都宮は餃子の消費量日本一を誇る餃子の街。戦後に満州から引き揚げた人々が伝えた餃子文化が根付きました。' },
+            { name: '群馬県', capital: '前橋市', id: 'gunma', difficulty: 'hard', gourmet: '焼きまんじゅう', trivia: '蒸した素まんじゅうに甘い味噌だれを塗って焼いた群馬の郷土菓子。外はカリッと中はふわふわの食感です。' },
+            { name: '石川県', capital: '金沢市', id: 'ishikawa', difficulty: 'hard', gourmet: '金沢カレー', trivia: '濃厚でルウが黒っぽく、ステンレスの皿に盛られてフォークで食べるのが特徴。カツとキャベツがトッピングされます。' },
+            { name: '山梨県', capital: '甲府市', id: 'yamanashi', difficulty: 'hard', gourmet: 'ほうとう', trivia: '戦国武将・武田信玄の陣中食として伝わる郷土料理。平たい麺をかぼちゃなどの野菜と味噌で煮込んだ栄養満点の一品です。' },
+            { name: '三重県', capital: '津市', id: 'mie', difficulty: 'hard', gourmet: '伊勢うどん', trivia: '伊勢神宮参拝者向けに発達した郷土料理。極太の柔らかい麺に濃い醤油ダレをかけて食べる独特のうどんです。' },
+            { name: '滋賀県', capital: '大津市', id: 'shiga', difficulty: 'hard', gourmet: '近江牛', trivia: '日本三大和牛の一つ。400年以上の歴史を持つ滋賀県のブランド牛で、きめ細かな霜降りと上品な味わいが特徴です。' },
+            { name: '島根県', capital: '松江市', id: 'shimane', difficulty: 'hard', gourmet: '出雲そば', trivia: 'そばの実を皮ごと挽くため黒っぽい色が特徴。三段の器に盛る「割子そば」と釜揚げそばが有名です。' },
+            { name: '香川県', capital: '高松市', id: 'kagawa', difficulty: 'hard', gourmet: '讃岐うどん', trivia: 'コシの強さが自慢の香川県の名物。製麺所や一般店舗での「うどん巡り」が観光の目玉となっています。' },
+            { name: '愛媛県', capital: '松山市', id: 'ehime', difficulty: 'hard', gourmet: 'みかん', trivia: '愛媛県はみかんの生産量日本一。温暖な瀬戸内海気候で育った甘くてジューシーなみかんが自慢です。' },
+            { name: '沖縄県', capital: '那覇市', id: 'okinawa', difficulty: 'hard', gourmet: 'ゴーヤチャンプルー', trivia: '沖縄の代表的な家庭料理。苦瓜（ゴーヤ）と豆腐、豚肉を炒めた栄養満点の料理で、夏バテ防止に効果的です。' },
             
             // B級グルメ
-            { name: '北海道', gourmet: 'ジンギスカン', id: 'hokkaido', difficulty: 'gourmet' },
-            { name: '青森県', gourmet: 'せんべい汁', id: 'aomori', difficulty: 'gourmet' },
-            { name: '岩手県', gourmet: 'わんこそば', id: 'iwate', difficulty: 'gourmet' },
-            { name: '宮城県', gourmet: '牛タン', id: 'miyagi', difficulty: 'gourmet' },
-            { name: '秋田県', gourmet: 'きりたんぽ', id: 'akita', difficulty: 'gourmet' },
-            { name: '山形県', gourmet: '芋煮', id: 'yamagata', difficulty: 'gourmet' },
-            { name: '福島県', gourmet: '喜多方ラーメン', id: 'fukushima', difficulty: 'gourmet' },
-            { name: '茨城県', gourmet: '納豆', id: 'ibaraki', difficulty: 'gourmet' },
-            { name: '栃木県', gourmet: '餃子（宇都宮）', id: 'tochigi', difficulty: 'gourmet' },
-            { name: '群馬県', gourmet: '焼きまんじゅう', id: 'gunma', difficulty: 'gourmet' },
-            { name: '埼玉県', gourmet: '十万石まんじゅう', id: 'saitama', difficulty: 'gourmet' },
-            { name: '千葉県', gourmet: 'ピーナッツ味噌', id: 'chiba', difficulty: 'gourmet' },
-            { name: '東京都', gourmet: 'もんじゃ焼き', id: 'tokyo', difficulty: 'gourmet' },
-            { name: '神奈川県', gourmet: 'サンマーメン', id: 'kanagawa', difficulty: 'gourmet' },
-            { name: '新潟県', gourmet: 'へぎそば', id: 'niigata', difficulty: 'gourmet' },
-            { name: '富山県', gourmet: 'ますの寿司', id: 'toyama', difficulty: 'gourmet' },
-            { name: '石川県', gourmet: '金沢カレー', id: 'ishikawa', difficulty: 'gourmet' },
-            { name: '福井県', gourmet: 'ソースカツ丼', id: 'fukui', difficulty: 'gourmet' },
-            { name: '山梨県', gourmet: 'ほうとう', id: 'yamanashi', difficulty: 'gourmet' },
-            { name: '長野県', gourmet: '信州そば', id: 'nagano', difficulty: 'gourmet' },
-            { name: '岐阜県', gourmet: '飛騨牛', id: 'gifu', difficulty: 'gourmet' },
-            { name: '静岡県', gourmet: 'B級グルメ富士宮やきそば', id: 'shizuoka', difficulty: 'gourmet' },
-            { name: '愛知県', gourmet: '味噌カツ', id: 'aichi', difficulty: 'gourmet' },
-            { name: '三重県', gourmet: '伊勢うどん', id: 'mie', difficulty: 'gourmet' },
-            { name: '滋賀県', gourmet: '近江牛', id: 'shiga', difficulty: 'gourmet' },
-            { name: '京都府', gourmet: '湯豆腐', id: 'kyoto', difficulty: 'gourmet' },
-            { name: '大阪府', gourmet: 'たこ焼き', id: 'osaka', difficulty: 'gourmet' },
-            { name: '兵庫県', gourmet: '神戸牛', id: 'hyogo', difficulty: 'gourmet' },
-            { name: '奈良県', gourmet: '柿の葉寿司', id: 'nara', difficulty: 'gourmet' },
-            { name: '和歌山県', gourmet: '梅干し', id: 'wakayama', difficulty: 'gourmet' },
-            { name: '鳥取県', gourmet: '二十世紀梨', id: 'tottori', difficulty: 'gourmet' },
-            { name: '島根県', gourmet: '出雲そば', id: 'shimane', difficulty: 'gourmet' },
-            { name: '岡山県', gourmet: 'きびだんご', id: 'okayama', difficulty: 'gourmet' },
-            { name: '広島県', gourmet: 'お好み焼き', id: 'hiroshima', difficulty: 'gourmet' },
-            { name: '山口県', gourmet: 'ふぐ', id: 'yamaguchi', difficulty: 'gourmet' },
-            { name: '徳島県', gourmet: '徳島ラーメン', id: 'tokushima', difficulty: 'gourmet' },
-            { name: '香川県', gourmet: '讃岐うどん', id: 'kagawa', difficulty: 'gourmet' },
-            { name: '愛媛県', gourmet: 'みかん', id: 'ehime', difficulty: 'gourmet' },
-            { name: '高知県', gourmet: 'カツオのたたき', id: 'kochi', difficulty: 'gourmet' },
-            { name: '福岡県', gourmet: '博多ラーメン', id: 'fukuoka', difficulty: 'gourmet' },
-            { name: '佐賀県', gourmet: '佐賀牛', id: 'saga', difficulty: 'gourmet' },
-            { name: '長崎県', gourmet: 'ちゃんぽん', id: 'nagasaki', difficulty: 'gourmet' },
-            { name: '熊本県', gourmet: '馬刺し', id: 'kumamoto', difficulty: 'gourmet' },
-            { name: '大分県', gourmet: 'とり天', id: 'oita', difficulty: 'gourmet' },
-            { name: '宮崎県', gourmet: 'チキン南蛮', id: 'miyazaki', difficulty: 'gourmet' },
-            { name: '鹿児島県', gourmet: '黒豚', id: 'kagoshima', difficulty: 'gourmet' },
-            { name: '沖縄県', gourmet: 'ゴーヤチャンプルー', id: 'okinawa', difficulty: 'gourmet' }
+            { name: '北海道', gourmet: 'ジンギスカン', id: 'hokkaido', difficulty: 'gourmet', trivia: '北海道開拓時代に羊毛を取るために飼育された羊肉を使った料理。特製のタレに漬け込んだラム肉を鉄板で焼いて食べます。' },
+            { name: '青森県', gourmet: 'せんべい汁', id: 'aomori', difficulty: 'gourmet', trivia: '八戸地方の郷土料理。南部せんべいを汁に入れて煮込んだ素朴な家庭の味。せんべいがもちもちした食感に変わります。' },
+            { name: '岩手県', gourmet: 'わんこそば', id: 'iwate', difficulty: 'gourmet', trivia: '盛岡の名物で、一口サイズのそばを次々と食べ続ける伝統的な食べ方。給仕さんの「はい、どんどん」の掛け声が有名です。' },
+            { name: '宮城県', gourmet: '牛タン', id: 'miyagi', difficulty: 'gourmet', trivia: '仙台名物として有名。戦後に牛タン専門店が誕生し、厚切りの牛タンを炭火で焼いて麦飯と一緒に食べるスタイルが定着しました。' },
+            { name: '秋田県', gourmet: 'きりたんぽ', id: 'akita', difficulty: 'gourmet', trivia: '新米を潰して竹輪状にしたご飯を串に刺し、比内地鶏の出汁で煮込んだ鍋料理。秋田の代表的な郷土料理です。' },
+            { name: '山形県', gourmet: '芋煮', id: 'yamagata', difficulty: 'gourmet', trivia: '秋の風物詩として川原で大鍋を囲んで食べる芋煮会が有名。里芋と牛肉を醤油味で煮込むのが山形流です。' },
+            { name: '福島県', gourmet: '喜多方ラーメン', id: 'fukushima', difficulty: 'gourmet', trivia: '札幌、博多と並ぶ日本三大ラーメンの一つ。醤油ベースの澄んだスープと平打ち縮れ麺が特徴です。' },
+            { name: '茨城県', gourmet: '納豆', id: 'ibaraki', difficulty: 'gourmet', trivia: '水戸納豆として全国的に有名。茨城県は納豆の消費量が全国1位で、藁に包まれた昔ながらの納豆も人気です。' },
+            { name: '栃木県', gourmet: '餃子（宇都宮）', id: 'tochigi', difficulty: 'gourmet', trivia: '宇都宮は餃子の消費量日本一を誇る餃子の街。戦後に満州から引き揚げた人々が伝えた餃子文化が根付きました。' },
+            { name: '群馬県', gourmet: '焼きまんじゅう', id: 'gunma', difficulty: 'gourmet', trivia: '蒸した素まんじゅうに甘い味噌だれを塗って焼いた群馬の郷土菓子。外はカリッと中はふわふわの食感です。' },
+            { name: '埼玉県', gourmet: '十万石まんじゅう', id: 'saitama', difficulty: 'gourmet', trivia: '「うまい、うますぎる」のCMで有名な埼玉銘菓。つくね芋を使った皮とこし餡が特徴の上品な和菓子です。' },
+            { name: '千葉県', gourmet: 'ピーナッツ味噌', id: 'chiba', difficulty: 'gourmet', trivia: '千葉県産の落花生を使った郷土料理。味噌にピーナッツを加えた甘めの味付けで、野菜スティックなどにつけて食べます。' },
+            { name: '東京都', gourmet: 'もんじゃ焼き', id: 'tokyo', difficulty: 'gourmet', trivia: '下町の駄菓子屋で生まれた庶民的な料理。水で溶いた小麦粉を鉄板で焼き、ヘラで食べる独特のスタイルが特徴です。' },
+            { name: '神奈川県', gourmet: 'サンマーメン', id: 'kanagawa', difficulty: 'gourmet', trivia: '横浜発祥のご当地ラーメン。醤油ベースのスープにもやしたっぷりの野菜あんかけがのった、ボリューム満点の一品です。' },
+            { name: '新潟県', gourmet: 'へぎそば', id: 'niigata', difficulty: 'gourmet', trivia: 'つなぎに布海苔を使った緑色がかったそば。「へぎ」という木の器に盛りつけられ、つるりとした喉越しが自慢です。' },
+            { name: '富山県', gourmet: 'ますの寿司', id: 'toyama', difficulty: 'gourmet', trivia: '神通川で獲れる鱒を使った駅弁として有名。竹の皮に包まれた押し寿司で、富山の代表的な郷土料理です。' },
+            { name: '石川県', gourmet: '金沢カレー', id: 'ishikawa', difficulty: 'gourmet', trivia: '濃厚でルウが黒っぽく、ステンレスの皿に盛られてフォークで食べるのが特徴。カツとキャベツがトッピングされます。' },
+            { name: '福井県', gourmet: 'ソースカツ丼', id: 'fukui', difficulty: 'gourmet', trivia: '卵でとじずにウスターソースをかけたカツ丼。福井では「カツ丼」といえばこのソースカツ丼を指します。' },
+            { name: '山梨県', gourmet: 'ほうとう', id: 'yamanashi', difficulty: 'gourmet', trivia: '戦国武将・武田信玄の陣中食として伝わる郷土料理。平たい麺をかぼちゃなどの野菜と味噌で煮込んだ栄養満点の一品です。' },
+            { name: '長野県', gourmet: '信州そば', id: 'nagano', difficulty: 'gourmet', trivia: '冷涼な気候で育ったそばの実を使った香り高いそば。戸隠そばや安曇野そばなど、地域ごとに特色があります。' },
+            { name: '岐阜県', gourmet: '飛騨牛', id: 'gifu', difficulty: 'gourmet', trivia: '飛騨地方で育てられた黒毛和牛。霜降りが美しく、とろけるような食感と深い旨みで全国的に高い評価を受けています。' },
+            { name: '静岡県', gourmet: 'B級グルメ富士宮やきそば', id: 'shizuoka', difficulty: 'gourmet', trivia: 'コシの強い蒸し麺と肉かす、削り節が特徴のB級グルメ。B-1グランプリで金賞を受賞し、全国的に有名になりました。' },
+            { name: '愛知県', gourmet: '味噌カツ', id: 'aichi', difficulty: 'gourmet', trivia: '名古屋名物の代表格。赤味噌ベースの濃厚なタレをかけたとんかつで、甘辛い味付けが特徴的です。' },
+            { name: '三重県', gourmet: '伊勢うどん', id: 'mie', difficulty: 'gourmet', trivia: '伊勢神宮参拝者向けに発達した郷土料理。極太の柔らかい麺に濃い醤油ダレをかけて食べる独特のうどんです。' },
+            { name: '滋賀県', gourmet: '近江牛', id: 'shiga', difficulty: 'gourmet', trivia: '日本三大和牛の一つ。400年以上の歴史を持つ滋賀県のブランド牛で、きめ細かな霜降りと上品な味わいが特徴です。' },
+            { name: '京都府', gourmet: '湯豆腐', id: 'kyoto', difficulty: 'gourmet', trivia: '精進料理から発達した京都の代表的な料理。良質な水と豆腐を昆布だしで温めて、ポン酢や醤油でシンプルに味わいます。' },
+            { name: '大阪府', gourmet: 'たこ焼き', id: 'osaka', difficulty: 'gourmet', trivia: '大阪のソウルフード。明石焼きをヒントに考案され、外はカリッと中はトロッとした食感と、ソースとマヨネーズの組み合わせが絶妙です。' },
+            { name: '兵庫県', gourmet: '神戸牛', id: 'hyogo', difficulty: 'gourmet', trivia: '世界最高級の牛肉として知られるブランド牛。厳格な基準をクリアした但馬牛のみが神戸牛と名乗ることができます。' },
+            { name: '奈良県', gourmet: '柿の葉寿司', id: 'nara', difficulty: 'gourmet', trivia: '奈良の山間部で生まれた保存食。鯖や鮭を酢飯にのせ、殺菌作用のある柿の葉で包んだ押し寿司です。' },
+            { name: '和歌山県', gourmet: '梅干し', id: 'wakayama', difficulty: 'gourmet', trivia: '和歌山は梅の生産量日本一。南高梅を使った梅干しは大粒で肉厚、上品な酸味と甘みが特徴です。' },
+            { name: '鳥取県', gourmet: '二十世紀梨', id: 'tottori', difficulty: 'gourmet', trivia: '鳥取県の代表的な特産品。みずみずしくシャキシャキした食感と上品な甘さが特徴の青梨です。' },
+            { name: '島根県', gourmet: '出雲そば', id: 'shimane', difficulty: 'gourmet', trivia: 'そばの実を皮ごと挽くため黒っぽい色が特徴。三段の器に盛る「割子そば」と釜揚げそばが有名です。' },
+            { name: '岡山県', gourmet: 'きびだんご', id: 'okayama', difficulty: 'gourmet', trivia: '桃太郎伝説で有名な岡山の銘菓。もち米と砂糖、水飴で作られた柔らかくて上品な甘さの和菓子です。' },
+            { name: '広島県', gourmet: 'お好み焼き', id: 'hiroshima', difficulty: 'gourmet', trivia: '広島風お好み焼きは具材を重ねて焼く「重ね焼き」が特徴。中華麺が入り、ヘラとフォークで食べる独特のスタイルです。' },
+            { name: '山口県', gourmet: 'ふぐ', id: 'yamaguchi', difficulty: 'gourmet', trivia: '下関市はふぐの本場として有名。透明感のある薄造りの刺身「てっさ」と鍋料理「てっちり」が代表的な食べ方です。' },
+            { name: '徳島県', gourmet: '徳島ラーメン', id: 'tokushima', difficulty: 'gourmet', trivia: '豚骨醤油ベースの濃厚なスープに生卵をトッピングするのが特徴。白系、黄系、茶系の3つの系統があります。' },
+            { name: '香川県', gourmet: '讃岐うどん', id: 'kagawa', difficulty: 'gourmet', trivia: 'コシの強さが自慢の香川県の名物。製麺所や一般店舗での「うどん巡り」が観光の目玉となっています。' },
+            { name: '愛媛県', gourmet: 'みかん', id: 'ehime', difficulty: 'gourmet', trivia: '愛媛県はみかんの生産量日本一。温暖な瀬戸内海気候で育った甘くてジューシーなみかんが自慢です。' },
+            { name: '高知県', gourmet: 'カツオのたたき', id: 'kochi', difficulty: 'gourmet', trivia: '土佐の代表的な郷土料理。新鮮なカツオを藁で豪快に炙り、ニンニクや玉ねぎと一緒にポン酢で食べます。' },
+            { name: '福岡県', gourmet: '博多ラーメン', id: 'fukuoka', difficulty: 'gourmet', trivia: '豚骨ラーメンの発祥地。白濁したスープと細い麺が特徴で、替え玉文化も博多から全国に広がりました。' },
+            { name: '佐賀県', gourmet: '佐賀牛', id: 'saga', difficulty: 'gourmet', trivia: '佐賀県産の黒毛和牛のブランド。きめ細かな霜降りと柔らかな肉質で、焼肉やステーキに最適です。' },
+            { name: '長崎県', gourmet: 'ちゃんぽん', id: 'nagasaki', difficulty: 'gourmet', trivia: '長崎発祥の麺料理。豚骨と鶏ガラのスープに野菜や魚介をたっぷり入れた栄養満点の庶民料理です。' },
+            { name: '熊本県', gourmet: '馬刺し', id: 'kumamoto', difficulty: 'gourmet', trivia: '熊本の郷土料理として親しまれている馬肉の刺身。甘い醤油にニンニクと生姜を薬味として食べます。' },
+            { name: '大分県', gourmet: 'とり天', id: 'oita', difficulty: 'gourmet', trivia: '大分県の郷土料理。鶏肉に衣をつけて揚げた天ぷらで、ポン酢や醤油ベースのタレで食べます。' },
+            { name: '宮崎県', gourmet: 'チキン南蛮', id: 'miyazaki', difficulty: 'gourmet', trivia: '宮崎発祥の鶏料理。甘酢ダレをかけた揚げ鶏にタルタルソースをたっぷりかけた、宮崎県民のソウルフードです。' },
+            { name: '鹿児島県', gourmet: '黒豚', id: 'kagoshima', difficulty: 'gourmet', trivia: '鹿児島県特産の黒豚は、やわらかく甘みのある肉質が特徴。しゃぶしゃぶやとんかつで味わうのが人気です。' },
+            { name: '沖縄県', gourmet: 'ゴーヤチャンプルー', id: 'okinawa', difficulty: 'gourmet', trivia: '沖縄の代表的な家庭料理。苦瓜（ゴーヤ）と豆腐、豚肉を炒めた栄養満点の料理で、夏バテ防止に効果的です。' }
         ];
 
         let currentQuestionIndex = 0;
@@ -1322,6 +1350,7 @@
             clearMapHighlight();
             
             document.getElementById('result').style.display = 'none';
+            document.getElementById('trivia').style.display = 'none';
             document.getElementById('auto-progress').style.display = 'none';
             document.getElementById('next-btn').style.display = 'none';
             document.getElementById('finish-btn').style.display = 'none';
@@ -1401,6 +1430,19 @@
             }
             
             resultDiv.style.display = 'block';
+            
+            // 豆知識を表示（全難易度で表示）
+            if (current.trivia) {
+                const triviaDiv = document.getElementById('trivia');
+                const gourmetText = current.gourmet ? `「${current.gourmet}」について：` : '';
+                triviaDiv.innerHTML = `
+                    <div class="trivia-header">
+                        🍽️ ${current.name}のB級グルメ豆知識
+                    </div>
+                    <strong>${gourmetText}</strong>${current.trivia}
+                `;
+                triviaDiv.style.display = 'block';
+            }
             
             // 自動進行を開始
             if (currentQuestionIndex < shuffledPrefectures.length - 1) {
@@ -1702,3 +1744,5 @@
     </script>
 </body>
 </html>
+
+
