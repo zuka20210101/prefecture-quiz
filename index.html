@@ -382,11 +382,17 @@
         }
 
         .reset-btn {
-            width: 80px;
-            height: 30px;
-            border-radius: 15px;
-            font-size: 12px;
+            width: 40px;
+            height: 60px;
+            border-radius: 20px;
+            font-size: 11px;
             margin-top: 5px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
         }
 
         .zoom-info {
@@ -612,9 +618,15 @@
             }
             
             .reset-btn {
-                width: 70px;
-                height: 28px;
-                font-size: 11px;
+                width: 35px;
+                height: 50px;
+                font-size: 10px;
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                line-height: 1.2;
             }
             
             /* 地図タイトルの調整 */
@@ -861,7 +873,7 @@
                     
                     <div class="controls">
                         <div id="auto-progress" style="display: none; text-align: center; color: #718096; font-size: 1.1em;">
-                            <span id="countdown">1</span>秒後に次の問題へ...
+                            <span id="countdown">5</span>秒後に次の問題へ...
                         </div>
                         <button id="next-btn" onclick="nextQuestion()" style="display: none;">次の問題</button>
                         <button id="finish-btn" onclick="finishQuiz()" style="display: none;">結果を見る</button>
@@ -1453,7 +1465,7 @@
         }
         
         function startAutoProgress() {
-            let countdown = 1;
+            let countdown = 5;
             document.getElementById('countdown').textContent = countdown;
             document.getElementById('auto-progress').style.display = 'block';
             
@@ -1470,7 +1482,7 @@
         }
         
         function startAutoFinish() {
-            let countdown = 1;
+            let countdown = 5;
             document.getElementById('countdown').textContent = countdown;
             document.getElementById('auto-progress').innerHTML = `<span id="countdown">${countdown}</span>秒後に結果を表示...`;
             document.getElementById('auto-progress').style.display = 'block';
