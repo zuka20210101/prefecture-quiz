@@ -719,6 +719,16 @@
             border-color: #c53030;
         }
 
+        .difficulty-btn.gourmet {
+            border-color: #dd6b20;
+            color: #dd6b20;
+        }
+
+        .difficulty-btn.gourmet:hover {
+            background: #fbd38d;
+            border-color: #c05621;
+        }
+
         .difficulty-btn small {
             display: block;
             margin-top: 8px;
@@ -759,7 +769,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🗾 都道府県・県庁所在地クイズ</h1>
+        <h1 id="main-title">🗾 都道府県・県庁所在地クイズ</h1>
         
         <div id="loading-screen" class="loading">
             <div class="loading-spinner"></div>
@@ -788,6 +798,10 @@
                     <button class="difficulty-btn hard" onclick="setDifficulty('hard')">
                         🔴 難しい<br>
                         <small>都道府県名と全く違う県庁所在地（12問）</small>
+                    </button>
+                    <button class="difficulty-btn gourmet" onclick="setDifficulty('gourmet')">
+                        🍜 B級グルメ<br>
+                        <small>その県の代表的なB級グルメを当てよう（47問）</small>
                     </button>
                 </div>
             </div>
@@ -922,7 +936,56 @@
             { name: '島根県', capital: '松江市', id: 'shimane', difficulty: 'hard' },
             { name: '香川県', capital: '高松市', id: 'kagawa', difficulty: 'hard' },
             { name: '愛媛県', capital: '松山市', id: 'ehime', difficulty: 'hard' },
-            { name: '沖縄県', capital: '那覇市', id: 'okinawa', difficulty: 'hard' }
+            { name: '沖縄県', capital: '那覇市', id: 'okinawa', difficulty: 'hard' },
+            
+            // B級グルメ
+            { name: '北海道', gourmet: 'ジンギスカン', id: 'hokkaido', difficulty: 'gourmet' },
+            { name: '青森県', gourmet: 'せんべい汁', id: 'aomori', difficulty: 'gourmet' },
+            { name: '岩手県', gourmet: 'わんこそば', id: 'iwate', difficulty: 'gourmet' },
+            { name: '宮城県', gourmet: '牛タン', id: 'miyagi', difficulty: 'gourmet' },
+            { name: '秋田県', gourmet: 'きりたんぽ', id: 'akita', difficulty: 'gourmet' },
+            { name: '山形県', gourmet: '芋煮', id: 'yamagata', difficulty: 'gourmet' },
+            { name: '福島県', gourmet: '喜多方ラーメン', id: 'fukushima', difficulty: 'gourmet' },
+            { name: '茨城県', gourmet: '納豆', id: 'ibaraki', difficulty: 'gourmet' },
+            { name: '栃木県', gourmet: '餃子（宇都宮）', id: 'tochigi', difficulty: 'gourmet' },
+            { name: '群馬県', gourmet: '焼きまんじゅう', id: 'gunma', difficulty: 'gourmet' },
+            { name: '埼玉県', gourmet: '十万石まんじゅう', id: 'saitama', difficulty: 'gourmet' },
+            { name: '千葉県', gourmet: 'ピーナッツ味噌', id: 'chiba', difficulty: 'gourmet' },
+            { name: '東京都', gourmet: 'もんじゃ焼き', id: 'tokyo', difficulty: 'gourmet' },
+            { name: '神奈川県', gourmet: 'サンマーメン', id: 'kanagawa', difficulty: 'gourmet' },
+            { name: '新潟県', gourmet: 'へぎそば', id: 'niigata', difficulty: 'gourmet' },
+            { name: '富山県', gourmet: 'ますの寿司', id: 'toyama', difficulty: 'gourmet' },
+            { name: '石川県', gourmet: '金沢カレー', id: 'ishikawa', difficulty: 'gourmet' },
+            { name: '福井県', gourmet: 'ソースカツ丼', id: 'fukui', difficulty: 'gourmet' },
+            { name: '山梨県', gourmet: 'ほうとう', id: 'yamanashi', difficulty: 'gourmet' },
+            { name: '長野県', gourmet: '信州そば', id: 'nagano', difficulty: 'gourmet' },
+            { name: '岐阜県', gourmet: '飛騨牛', id: 'gifu', difficulty: 'gourmet' },
+            { name: '静岡県', gourmet: 'B級グルメ富士宮やきそば', id: 'shizuoka', difficulty: 'gourmet' },
+            { name: '愛知県', gourmet: '味噌カツ', id: 'aichi', difficulty: 'gourmet' },
+            { name: '三重県', gourmet: '伊勢うどん', id: 'mie', difficulty: 'gourmet' },
+            { name: '滋賀県', gourmet: '近江牛', id: 'shiga', difficulty: 'gourmet' },
+            { name: '京都府', gourmet: '湯豆腐', id: 'kyoto', difficulty: 'gourmet' },
+            { name: '大阪府', gourmet: 'たこ焼き', id: 'osaka', difficulty: 'gourmet' },
+            { name: '兵庫県', gourmet: '神戸牛', id: 'hyogo', difficulty: 'gourmet' },
+            { name: '奈良県', gourmet: '柿の葉寿司', id: 'nara', difficulty: 'gourmet' },
+            { name: '和歌山県', gourmet: '梅干し', id: 'wakayama', difficulty: 'gourmet' },
+            { name: '鳥取県', gourmet: '二十世紀梨', id: 'tottori', difficulty: 'gourmet' },
+            { name: '島根県', gourmet: '出雲そば', id: 'shimane', difficulty: 'gourmet' },
+            { name: '岡山県', gourmet: 'きびだんご', id: 'okayama', difficulty: 'gourmet' },
+            { name: '広島県', gourmet: 'お好み焼き', id: 'hiroshima', difficulty: 'gourmet' },
+            { name: '山口県', gourmet: 'ふぐ', id: 'yamaguchi', difficulty: 'gourmet' },
+            { name: '徳島県', gourmet: '徳島ラーメン', id: 'tokushima', difficulty: 'gourmet' },
+            { name: '香川県', gourmet: '讃岐うどん', id: 'kagawa', difficulty: 'gourmet' },
+            { name: '愛媛県', gourmet: 'みかん', id: 'ehime', difficulty: 'gourmet' },
+            { name: '高知県', gourmet: 'カツオのたたき', id: 'kochi', difficulty: 'gourmet' },
+            { name: '福岡県', gourmet: '博多ラーメン', id: 'fukuoka', difficulty: 'gourmet' },
+            { name: '佐賀県', gourmet: '佐賀牛', id: 'saga', difficulty: 'gourmet' },
+            { name: '長崎県', gourmet: 'ちゃんぽん', id: 'nagasaki', difficulty: 'gourmet' },
+            { name: '熊本県', gourmet: '馬刺し', id: 'kumamoto', difficulty: 'gourmet' },
+            { name: '大分県', gourmet: 'とり天', id: 'oita', difficulty: 'gourmet' },
+            { name: '宮崎県', gourmet: 'チキン南蛮', id: 'miyazaki', difficulty: 'gourmet' },
+            { name: '鹿児島県', gourmet: '黒豚', id: 'kagoshima', difficulty: 'gourmet' },
+            { name: '沖縄県', gourmet: 'ゴーヤチャンプルー', id: 'okinawa', difficulty: 'gourmet' }
         ];
 
         let currentQuestionIndex = 0;
@@ -1097,6 +1160,15 @@
         function setDifficulty(difficulty) {
             selectedDifficulty = difficulty;
             filteredPrefectures = prefectures.filter(pref => pref.difficulty === difficulty);
+            
+            // タイトルを更新
+            const mainTitle = document.getElementById('main-title');
+            if (difficulty === 'gourmet') {
+                mainTitle.textContent = '🍜 都道府県B級グルメクイズ';
+            } else {
+                mainTitle.textContent = '🗾 都道府県・県庁所在地クイズ';
+            }
+            
             startQuiz();
         }
 
@@ -1235,13 +1307,17 @@
             document.getElementById('incorrect-count').textContent = incorrectCount;
             
             // 難易度表示を更新
-            const difficultyNames = { easy: '簡単', normal: '普通', hard: '難しい' };
+            const difficultyNames = { easy: '簡単', normal: '普通', hard: '難しい', gourmet: 'B級グルメ' };
             document.getElementById('current-difficulty').textContent = difficultyNames[selectedDifficulty];
             
             const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
             document.getElementById('progress-bar').style.width = progress + '%';
             
-            document.getElementById('question').textContent = `「${current.capital}」はどの都道府県の県庁所在地ですか？`;
+            if (selectedDifficulty === 'gourmet') {
+                document.getElementById('question').textContent = `「${current.gourmet}」はどの都道府県の名物グルメですか？`;
+            } else {
+                document.getElementById('question').textContent = `「${current.capital}」はどの都道府県の県庁所在地ですか？`;
+            }
             
             clearMapHighlight();
             
@@ -1422,6 +1498,9 @@
             clearSelection();
             hideDoubleTapHint();
             
+            // タイトルをリセット
+            document.getElementById('main-title').textContent = '🗾 都道府県・県庁所在地クイズ';
+            
             document.getElementById('final-screen').style.display = 'none';
             document.getElementById('start-screen').style.display = 'block';
             clearMapHighlight();
@@ -1430,12 +1509,13 @@
         function shareResults() {
             const totalQuestions = shuffledPrefectures.length;
             const percentage = Math.round((correctCount / totalQuestions) * 100);
-            const difficultyNames = { easy: '簡単', normal: '普通', hard: '難しい' };
-            const text = `都道府県・県庁所在地クイズ（${difficultyNames[selectedDifficulty]}）で ${correctCount}/${totalQuestions}問正解 (${percentage}%) でした！🗾\n\n高精度地図で楽しく学習できます！`;
+            const difficultyNames = { easy: '簡単', normal: '普通', hard: '難しい', gourmet: 'B級グルメ' };
+            const quizType = selectedDifficulty === 'gourmet' ? 'B級グルメクイズ' : '都道府県・県庁所在地クイズ';
+            const text = `${quizType}（${difficultyNames[selectedDifficulty]}）で ${correctCount}/${totalQuestions}問正解 (${percentage}%) でした！🗾\n\n高精度地図で楽しく学習できます！`;
             
             if (navigator.share) {
                 navigator.share({
-                    title: '都道府県・県庁所在地クイズ',
+                    title: quizType,
                     text: text,
                     url: window.location.href
                 });
