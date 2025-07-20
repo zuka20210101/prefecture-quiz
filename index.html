@@ -652,6 +652,109 @@
                 margin-bottom: 20px !important;
             }
         }
+
+        .difficulty-selection {
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .difficulty-selection h3 {
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 1.5em;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-btn {
+            background: white;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 180px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .difficulty-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .difficulty-btn.easy {
+            border-color: #38a169;
+            color: #38a169;
+        }
+
+        .difficulty-btn.easy:hover {
+            background: #c6f6d5;
+            border-color: #2f855a;
+        }
+
+        .difficulty-btn.normal {
+            border-color: #d69e2e;
+            color: #d69e2e;
+        }
+
+        .difficulty-btn.normal:hover {
+            background: #faf089;
+            border-color: #b7791f;
+        }
+
+        .difficulty-btn.hard {
+            border-color: #e53e3e;
+            color: #e53e3e;
+        }
+
+        .difficulty-btn.hard:hover {
+            background: #fed7d7;
+            border-color: #c53030;
+        }
+
+        .difficulty-btn small {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.9em;
+            font-weight: normal;
+            opacity: 0.8;
+        }
+        
+        .difficulty-display {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            font-size: 0.9em;
+            border-left: 4px solid #667eea;
+        }
+        
+        /* スマホ対応の難易度選択調整 */
+        @media (max-width: 768px) {
+            .difficulty-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .difficulty-btn {
+                min-width: 250px;
+                padding: 15px;
+                font-size: 1em;
+            }
+            
+            .difficulty-selection h3 {
+                font-size: 1.3em;
+                margin-bottom: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -670,7 +773,24 @@
             <strong>地図にマウスを乗せる、またはタッチすると都道府県名が表示されます。</strong><br>
             <strong>📱 スマホ：ピンチでズーム、ドラッグで移動できます</strong><br>
             <strong>⚡ ダブルタップで回答！1回目で選択、2回目で決定</strong></p>
-            <button onclick="startQuiz()">クイズ開始</button>
+            
+            <div class="difficulty-selection">
+                <h3>難易度を選択してください</h3>
+                <div class="difficulty-buttons">
+                    <button class="difficulty-btn easy" onclick="setDifficulty('easy')">
+                        🟢 簡単<br>
+                        <small>都道府県名と同じ・有名な県庁所在地（25問）</small>
+                    </button>
+                    <button class="difficulty-btn normal" onclick="setDifficulty('normal')">
+                        🟡 普通<br>
+                        <small>推測しやすい県庁所在地（10問）</small>
+                    </button>
+                    <button class="difficulty-btn hard" onclick="setDifficulty('hard')">
+                        🔴 難しい<br>
+                        <small>都道府県名と全く違う県庁所在地（12問）</small>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div id="quiz-container" class="quiz-container">
@@ -684,10 +804,11 @@
                     
                     <div class="quiz-info-compact">
                         <div class="score-compact">
-                            <span><span id="current-question">1</span>/47</span>
+                            <span><span id="current-question">1</span>/<span id="total-questions">0</span></span>
                             <span>✅<span id="correct-count">0</span></span>
                             <span>❌<span id="incorrect-count">0</span></span>
                         </div>
+                        <div class="difficulty-display">難易度: <span id="current-difficulty">簡単</span></div>
                     </div>
                     
                     <div class="instruction">
@@ -750,53 +871,58 @@
 
     <script>
         const prefectures = [
-            { name: '北海道', capital: '札幌市', id: 'hokkaido' },
-            { name: '青森県', capital: '青森市', id: 'aomori' },
-            { name: '岩手県', capital: '盛岡市', id: 'iwate' },
-            { name: '宮城県', capital: '仙台市', id: 'miyagi' },
-            { name: '秋田県', capital: '秋田市', id: 'akita' },
-            { name: '山形県', capital: '山形市', id: 'yamagata' },
-            { name: '福島県', capital: '福島市', id: 'fukushima' },
-            { name: '茨城県', capital: '水戸市', id: 'ibaraki' },
-            { name: '栃木県', capital: '宇都宮市', id: 'tochigi' },
-            { name: '群馬県', capital: '前橋市', id: 'gunma' },
-            { name: '埼玉県', capital: 'さいたま市', id: 'saitama' },
-            { name: '千葉県', capital: '千葉市', id: 'chiba' },
-            { name: '東京都', capital: '東京都', id: 'tokyo' },
-            { name: '神奈川県', capital: '横浜市', id: 'kanagawa' },
-            { name: '新潟県', capital: '新潟市', id: 'niigata' },
-            { name: '富山県', capital: '富山市', id: 'toyama' },
-            { name: '石川県', capital: '金沢市', id: 'ishikawa' },
-            { name: '福井県', capital: '福井市', id: 'fukui' },
-            { name: '山梨県', capital: '甲府市', id: 'yamanashi' },
-            { name: '長野県', capital: '長野市', id: 'nagano' },
-            { name: '岐阜県', capital: '岐阜市', id: 'gifu' },
-            { name: '静岡県', capital: '静岡市', id: 'shizuoka' },
-            { name: '愛知県', capital: '名古屋市', id: 'aichi' },
-            { name: '三重県', capital: '津市', id: 'mie' },
-            { name: '滋賀県', capital: '大津市', id: 'shiga' },
-            { name: '京都府', capital: '京都市', id: 'kyoto' },
-            { name: '大阪府', capital: '大阪市', id: 'osaka' },
-            { name: '兵庫県', capital: '神戸市', id: 'hyogo' },
-            { name: '奈良県', capital: '奈良市', id: 'nara' },
-            { name: '和歌山県', capital: '和歌山市', id: 'wakayama' },
-            { name: '鳥取県', capital: '鳥取市', id: 'tottori' },
-            { name: '島根県', capital: '松江市', id: 'shimane' },
-            { name: '岡山県', capital: '岡山市', id: 'okayama' },
-            { name: '広島県', capital: '広島市', id: 'hiroshima' },
-            { name: '山口県', capital: '山口市', id: 'yamaguchi' },
-            { name: '徳島県', capital: '徳島市', id: 'tokushima' },
-            { name: '香川県', capital: '高松市', id: 'kagawa' },
-            { name: '愛媛県', capital: '松山市', id: 'ehime' },
-            { name: '高知県', capital: '高知市', id: 'kochi' },
-            { name: '福岡県', capital: '福岡市', id: 'fukuoka' },
-            { name: '佐賀県', capital: '佐賀市', id: 'saga' },
-            { name: '長崎県', capital: '長崎市', id: 'nagasaki' },
-            { name: '熊本県', capital: '熊本市', id: 'kumamoto' },
-            { name: '大分県', capital: '大分市', id: 'oita' },
-            { name: '宮崎県', capital: '宮崎市', id: 'miyazaki' },
-            { name: '鹿児島県', capital: '鹿児島市', id: 'kagoshima' },
-            { name: '沖縄県', capital: '那覇市', id: 'okinawa' }
+            // 簡単（同じ名前・超有名）
+            { name: '東京都', capital: '東京都', id: 'tokyo', difficulty: 'easy' },
+            { name: '京都府', capital: '京都市', id: 'kyoto', difficulty: 'easy' },
+            { name: '大阪府', capital: '大阪市', id: 'osaka', difficulty: 'easy' },
+            { name: '神奈川県', capital: '横浜市', id: 'kanagawa', difficulty: 'easy' },
+            { name: '千葉県', capital: '千葉市', id: 'chiba', difficulty: 'easy' },
+            { name: '埼玉県', capital: 'さいたま市', id: 'saitama', difficulty: 'easy' },
+            { name: '青森県', capital: '青森市', id: 'aomori', difficulty: 'easy' },
+            { name: '秋田県', capital: '秋田市', id: 'akita', difficulty: 'easy' },
+            { name: '山形県', capital: '山形市', id: 'yamagata', difficulty: 'easy' },
+            { name: '福島県', capital: '福島市', id: 'fukushima', difficulty: 'easy' },
+            { name: '新潟県', capital: '新潟市', id: 'niigata', difficulty: 'easy' },
+            { name: '富山県', capital: '富山市', id: 'toyama', difficulty: 'easy' },
+            { name: '福井県', capital: '福井市', id: 'fukui', difficulty: 'easy' },
+            { name: '長野県', capital: '長野市', id: 'nagano', difficulty: 'easy' },
+            { name: '岐阜県', capital: '岐阜市', id: 'gifu', difficulty: 'easy' },
+            { name: '静岡県', capital: '静岡市', id: 'shizuoka', difficulty: 'easy' },
+            { name: '奈良県', capital: '奈良市', id: 'nara', difficulty: 'easy' },
+            { name: '和歌山県', capital: '和歌山市', id: 'wakayama', difficulty: 'easy' },
+            { name: '鳥取県', capital: '鳥取市', id: 'tottori', difficulty: 'easy' },
+            { name: '徳島県', capital: '徳島市', id: 'tokushima', difficulty: 'easy' },
+            { name: '高知県', capital: '高知市', id: 'kochi', difficulty: 'easy' },
+            { name: '佐賀県', capital: '佐賀市', id: 'saga', difficulty: 'easy' },
+            { name: '長崎県', capital: '長崎市', id: 'nagasaki', difficulty: 'easy' },
+            { name: '大分県', capital: '大分市', id: 'oita', difficulty: 'easy' },
+            { name: '宮崎県', capital: '宮崎市', id: 'miyazaki', difficulty: 'easy' },
+            
+            // 普通（推測可能・関連性がある）
+            { name: '北海道', capital: '札幌市', id: 'hokkaido', difficulty: 'normal' },
+            { name: '宮城県', capital: '仙台市', id: 'miyagi', difficulty: 'normal' },
+            { name: '愛知県', capital: '名古屋市', id: 'aichi', difficulty: 'normal' },
+            { name: '兵庫県', capital: '神戸市', id: 'hyogo', difficulty: 'normal' },
+            { name: '岡山県', capital: '岡山市', id: 'okayama', difficulty: 'normal' },
+            { name: '広島県', capital: '広島市', id: 'hiroshima', difficulty: 'normal' },
+            { name: '山口県', capital: '山口市', id: 'yamaguchi', difficulty: 'normal' },
+            { name: '福岡県', capital: '福岡市', id: 'fukuoka', difficulty: 'normal' },
+            { name: '熊本県', capital: '熊本市', id: 'kumamoto', difficulty: 'normal' },
+            { name: '鹿児島県', capital: '鹿児島市', id: 'kagoshima', difficulty: 'normal' },
+            
+            // 難しい（全く違う名前）
+            { name: '岩手県', capital: '盛岡市', id: 'iwate', difficulty: 'hard' },
+            { name: '茨城県', capital: '水戸市', id: 'ibaraki', difficulty: 'hard' },
+            { name: '栃木県', capital: '宇都宮市', id: 'tochigi', difficulty: 'hard' },
+            { name: '群馬県', capital: '前橋市', id: 'gunma', difficulty: 'hard' },
+            { name: '石川県', capital: '金沢市', id: 'ishikawa', difficulty: 'hard' },
+            { name: '山梨県', capital: '甲府市', id: 'yamanashi', difficulty: 'hard' },
+            { name: '三重県', capital: '津市', id: 'mie', difficulty: 'hard' },
+            { name: '滋賀県', capital: '大津市', id: 'shiga', difficulty: 'hard' },
+            { name: '島根県', capital: '松江市', id: 'shimane', difficulty: 'hard' },
+            { name: '香川県', capital: '高松市', id: 'kagawa', difficulty: 'hard' },
+            { name: '愛媛県', capital: '松山市', id: 'ehime', difficulty: 'hard' },
+            { name: '沖縄県', capital: '那覇市', id: 'okinawa', difficulty: 'hard' }
         ];
 
         let currentQuestionIndex = 0;
@@ -809,6 +935,8 @@
         let selectedPrefectureId = null;
         let lastTapTime = 0;
         let tapTimeout = null;
+        let selectedDifficulty = 'easy';
+        let filteredPrefectures = [];
 
         // 地図データの読み込み
         async function loadMapData() {
@@ -965,13 +1093,19 @@
             }
             return shuffled;
         }
+        
+        function setDifficulty(difficulty) {
+            selectedDifficulty = difficulty;
+            filteredPrefectures = prefectures.filter(pref => pref.difficulty === difficulty);
+            startQuiz();
+        }
 
         function startQuiz() {
             document.getElementById('start-screen').style.display = 'none';
             document.getElementById('quiz-container').style.display = 'block';
             document.getElementById('quiz-container').classList.add('active');
             
-            shuffledPrefectures = shuffleArray(prefectures);
+            shuffledPrefectures = shuffleArray(filteredPrefectures);
             currentQuestionIndex = 0;
             correctCount = 0;
             incorrectCount = 0;
@@ -1094,11 +1228,17 @@
                 autoProgressTimer = null;
             }
             
+            const totalQuestions = shuffledPrefectures.length;
             document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('total-questions').textContent = totalQuestions;
             document.getElementById('correct-count').textContent = correctCount;
             document.getElementById('incorrect-count').textContent = incorrectCount;
             
-            const progress = ((currentQuestionIndex + 1) / 47) * 100;
+            // 難易度表示を更新
+            const difficultyNames = { easy: '簡単', normal: '普通', hard: '難しい' };
+            document.getElementById('current-difficulty').textContent = difficultyNames[selectedDifficulty];
+            
+            const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
             document.getElementById('progress-bar').style.width = progress + '%';
             
             document.getElementById('question').textContent = `「${current.capital}」はどの都道府県の県庁所在地ですか？`;
@@ -1187,7 +1327,7 @@
             resultDiv.style.display = 'block';
             
             // 自動進行を開始
-            if (currentQuestionIndex < 46) {
+            if (currentQuestionIndex < shuffledPrefectures.length - 1) {
                 startAutoProgress();
             } else {
                 startAutoFinish();
@@ -1253,8 +1393,9 @@
             document.getElementById('quiz-container').style.display = 'none';
             document.getElementById('final-screen').style.display = 'block';
             
-            const percentage = Math.round((correctCount / 47) * 100);
-            document.getElementById('final-score').textContent = `${correctCount} / 47問正解 (${percentage}%)`;
+            const totalQuestions = shuffledPrefectures.length;
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            document.getElementById('final-score').textContent = `${correctCount} / ${totalQuestions}問正解 (${percentage}%)`;
             
             let message = '';
             if (percentage >= 90) {
@@ -1287,8 +1428,10 @@
         }
 
         function shareResults() {
-            const percentage = Math.round((correctCount / 47) * 100);
-            const text = `都道府県・県庁所在地クイズで ${correctCount}/47問正解 (${percentage}%) でした！🗾\n\n高精度地図で楽しく学習できます！`;
+            const totalQuestions = shuffledPrefectures.length;
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            const difficultyNames = { easy: '簡単', normal: '普通', hard: '難しい' };
+            const text = `都道府県・県庁所在地クイズ（${difficultyNames[selectedDifficulty]}）で ${correctCount}/${totalQuestions}問正解 (${percentage}%) でした！🗾\n\n高精度地図で楽しく学習できます！`;
             
             if (navigator.share) {
                 navigator.share({
